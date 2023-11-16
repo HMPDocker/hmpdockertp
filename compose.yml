@@ -3,8 +3,7 @@ volumes:
 
 
 networks:
-#  dvwa:
-  bridge:
+  dvwa:
 
 services:
   dvwa:
@@ -14,8 +13,8 @@ services:
       - DB_SERVER=db
     depends_on:
       - db
-#    networks:
-#      - dvwa
+    networks:
+      - dvwa
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
@@ -31,8 +30,8 @@ services:
       - MYSQL_DATABASE=dvwa
       - MYSQL_USER=dvwa
       - MYSQL_PASSWORD=p@ssw0rd
-#    volumes:
-#      - dvwa:/var/lib/mysql
+    volumes:
+      - dvwa:/var/lib/mysql
     networks:
       - bridge
     restart: unless-stopped
