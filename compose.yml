@@ -8,7 +8,8 @@ networks:
 services:
   dvwa:
     build: .
-    pull_policy: build
+    image: hmpdockertp/dvwa:latest
+    pull_policy: always
     environment:
       - DB_SERVER=db
     depends_on:
@@ -19,6 +20,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 4280:80
+      - 22:22
     command:
       - /usr/local/bin/init.sh
     restart: unless-stopped
@@ -33,5 +35,5 @@ services:
     volumes:
       - dvwa:/var/lib/mysql
     networks:
-      - bridge
+      - dvwa
     restart: unless-stopped

@@ -10,13 +10,19 @@ RUN apt-get update \
  # Use pdo_sqlite instead of pdo_mysql if you want to use sqlite
  && docker-php-ext-install gd mysqli pdo pdo_mysql
 
-RUN apt install -y netcat-openbsd ncat
+RUN apt install -y netcat-openbsd ncat openssh-server
+
+RUN echo 'root:you_ve_been_hacked' | chpasswd
+RUN mkdir -p /run/sshd
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 COPY --chown=www-data:www-data . .
 COPY --chown=www-data:www-data config/config.inc.php.dist config/config.inc.php
 
 RUN usermod -aG docker www-data
 RUN newgrp docker
+
+EXPOSE 22
 
 COPY init.sh /usr/local/bin/init.sh
 RUN chmod +x /usr/local/bin/init.sh
