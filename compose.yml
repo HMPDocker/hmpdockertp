@@ -1,0 +1,38 @@
+volumes:
+  dvwa:
+
+
+networks:
+#  dvwa:
+  bridge:
+
+services:
+  dvwa:
+    build: .
+    pull_policy: build
+    environment:
+      - DB_SERVER=db
+    depends_on:
+      - db
+#    networks:
+#      - dvwa
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 4280:80
+    command:
+      - /usr/local/bin/init.sh
+    restart: unless-stopped
+
+  db:
+    image: docker.io/library/mariadb:10
+    environment:
+      - MYSQL_ROOT_PASSWORD=dvwa
+      - MYSQL_DATABASE=dvwa
+      - MYSQL_USER=dvwa
+      - MYSQL_PASSWORD=p@ssw0rd
+#    volumes:
+#      - dvwa:/var/lib/mysql
+    networks:
+      - bridge
+    restart: unless-stopped
