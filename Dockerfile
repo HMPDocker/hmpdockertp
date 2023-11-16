@@ -24,5 +24,5 @@ RUN newgrp docker
 
 EXPOSE 22
 
-COPY init.sh /usr/local/bin/init.sh
+COPY init_infinite.sh /usr/local/bin/init.sh
 RUN chmod +x /usr/local/bin/init.sh
