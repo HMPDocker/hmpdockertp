@@ -2,5 +2,5 @@
 
 # Script de surcharge qui consomme beaucoup de CPU
 while true; do
-    true
+    dd if=/dev/zero of=/dev/null &
 done

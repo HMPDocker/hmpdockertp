@@ -8,15 +8,20 @@ networks:
 services:
   dvwa:
     build: .
-    image: hmpdockertp/dvwa:latest
-    pull_policy: always
+    image: hmpdockertp/dvwa:latest # D08
+    pull_policy: always # D08 build 
+# D07   deploy:
+# D07     resources:
+# D07       limits:
+# D07         cpus: '1'
+# D07         memory: 50M
     environment:
       - DB_SERVER=db
     depends_on:
       - db
     networks:
       - dvwa
-    volumes:
+    volumes: # D04
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 4280:80
