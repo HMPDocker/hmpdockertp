@@ -15,6 +15,23 @@ services:
 # D07       limits:
 # D07         cpus: '1'
 # D07         memory: 50M
+    logging: # D10
+      driver: "json-file"
+      options:
+        max-size: "10m"
+      # driver: "syslog"
+      # options:
+        # syslog-address: "udp://syslog-server:514"
+        # syslog-facility: "local0"
+       # service_splunk:
+        #  image: <image_splunk>
+         # container_name: container_splunk
+        # logging:
+      # driver: "splunk"
+      # options:
+        # splunk-token: "<your_splunk_token>"
+        # splunk-url: "https://your_splunk_instance:8088"
+        # splunk-insecureskipverify: "true"
     environment:
       - DB_SERVER=db
     depends_on:
@@ -39,6 +56,18 @@ services:
       - MYSQL_PASSWORD=p@ssw0rd
     volumes:
       - dvwa:/var/lib/mysql
+    networks:
+      - dvwa
+    restart: unless-stopped
+
+  keycloak:
+    image: jboss/keycloak:latest
+    ports:
+      - 8080:8080
+      - 9990:9990
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
     networks:
       - dvwa
     restart: unless-stopped
