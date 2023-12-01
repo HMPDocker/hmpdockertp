@@ -61,13 +61,14 @@ services:
     restart: unless-stopped
 
   keycloak:
-    image: jboss/keycloak:latest
+    image: keycloak/keycloak:latest
+    command: start-dev
     ports:
       - 8080:8080
       - 9990:9990
     environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
     networks:
       - dvwa
     restart: unless-stopped
